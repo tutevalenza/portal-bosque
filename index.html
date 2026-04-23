@@ -7,16 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:        #141412;
-    --bg2:       #1a1a17;
-    --bg3:       #202020;
-    --border:    #2a2a26;
-    --border2:   #333330;
+    --bg:        #ffffff;
+    --bg2:       #f7f5f0;
+    --bg3:       #efefec;
+    --border:    #dedad2;
+    --border2:   #ccc8be;
     --green:     #5a9e6f;
     --green-dim: #2d5c3e;
     --cream:     #e8e2d4;
     --cream-dim: #8a8478;
-    --cream-faint:#3a3a34;
+    --cream-faint:#9a9890;
     --heber-bg:  #1b3828; --heber-fg: #6aab7d; --heber-bd: #285a3a;
     --daniel-bg: #1a1e38; --daniel-fg: #7080cc; --daniel-bd: #283060;
     --nahuel-bg: #332210; --nahuel-fg: #c08840; --nahuel-bd: #5a3818;
@@ -47,7 +47,7 @@
     backdrop-filter: blur(12px);
   }
   .header-left { display: flex; align-items: center; gap: 14px; }
-  .logo { height: 22px; filter: brightness(0) invert(1) opacity(.9); }
+  .logo { height: 22px; filter: brightness(0) opacity(.85); }
   .header-div { width: 1px; height: 22px; background: var(--border2); }
   .header-title { font-size: 11px; color: var(--cream-dim); letter-spacing: .12em; text-transform: uppercase; }
   .header-cycle { font-size: 10px; color: var(--green); letter-spacing: .1em; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-top: 2px; }
@@ -113,7 +113,7 @@
     border-radius: 8px;
     overflow: hidden;
   }
-  thead { background: #0e0e0c; }
+  thead { background: #f0ede6; }
   th {
     text-align: left;
     font-family: 'DM Mono', monospace;
@@ -136,7 +136,7 @@
   tr:last-child td { border-bottom: none; }
   tbody tr { background: var(--bg2); }
   tbody tr:nth-child(odd) { background: var(--bg); }
-  tbody tr:hover td { background: #222220 !important; }
+  tbody tr:hover td { background: #f0ede6 !important; }
 
   /* ── CELLS ── */
   .dia-badge {
@@ -168,12 +168,12 @@
 
   .esp-name { font-weight: 500; color: var(--cream); font-size: 12px; }
 
-  .info-act { color: #8fbe9e; font-weight: 500; font-size: 11px; }
-  .info-hora { font-family: 'DM Mono', monospace; font-size: 10px; color: #4a6850; margin-top: 2px; }
+  .info-act { color: #2a7a48; font-weight: 500; font-size: 11px; }
+  .info-hora { font-family: 'DM Mono', monospace; font-size: 10px; color: #5a8a60; margin-top: 2px; }
 
-  .nec { color: #706a60; font-size: 11px; line-height: 1.6; }
+  .nec { color: #6a6460; font-size: 11px; line-height: 1.6; }
 
-  .nota { font-size: 10px; color: #484840; font-style: italic; line-height: 1.4; }
+  .nota { font-size: 10px; color: #8a8880; font-style: italic; line-height: 1.4; }
 
   .op-tag {
     display: inline-block; font-family: 'DM Mono', monospace;
