@@ -137,7 +137,15 @@
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQAjbZFpNcEopTvKwlp2Nn6EpFWNPAf3hMK0vc_NRM5K3NhSTe73DsHUjEV3YjKGWT4auUjQ3kXpucf/pub?output=csv';
 let ALL_DATA = [];
 
-const DIAS_ORDER = ['LUNES','MARTES','MIERCOLES','MIÉRCOLES','JUEVES','VIERNES','SABADO','SÁBADO','DOMINGO'];
+// Orden canónico de días (sin tildes para comparación)
+const DIAS_ORDER = ['LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO','DOMINGO'];
+
+// Quita tildes y pasa a mayúsculas para comparar
+function normalizar(s) {
+  return (s || '').toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
 
 function parseCSV(text) {
   const rows = []; const lines = text.split('\n'); let lastDia = '';
@@ -147,10 +155,16 @@ function parseCSV(text) {
     let [dia, resp, horario, espacio, necesidad, info, notas] = cols.map(c => c.trim());
     if (dia) lastDia = dia; else dia = lastDia;
     if (!espacio) continue;
-    rows.push({ dia: dia.toUpperCase(), resp: resp||'', horario: horario||'', espacio, necesidad: necesidad||'', info: info||'', notas: notas||'' });
+    rows.push({
+      dia: dia,                      // guardamos el original para mostrar
+      diaNorm: normalizar(dia),      // guardamos normalizado para comparar
+      resp: resp||'', horario: horario||'', espacio,
+      necesidad: necesidad||'', info: info||'', notas: notas||''
+    });
   }
   return rows;
 }
+
 function splitCSVLine(line) {
   const result = []; let cur = '', inQ = false;
   for (let i = 0; i < line.length; i++) {
@@ -161,6 +175,7 @@ function splitCSVLine(line) {
   }
   result.push(cur); return result;
 }
+
 async function fetchData() {
   try {
     const res = await fetch(CSV_URL);
@@ -168,14 +183,19 @@ async function fetchData() {
     const text = await res.text();
     ALL_DATA = parseCSV(text);
 
-    const diasEnDatos = new Set(ALL_DATA.map(r => r.dia).filter(Boolean));
-    const dias = DIAS_ORDER.filter(d => diasEnDatos.has(d));
+    // Días presentes en los datos (normalizados)
+    const diasNormEnDatos = new Set(ALL_DATA.map(r => r.diaNorm).filter(Boolean));
 
+    // Filtramos el orden canónico a los que existen, y para cada uno
+    // buscamos el texto original tal como está en la planilla
     const sel = document.getElementById('sel-dia');
-    dias.forEach(d => {
+    DIAS_ORDER.forEach(dNorm => {
+      if (!diasNormEnDatos.has(dNorm)) return;
+      // Tomamos el primer valor original que matchea
+      const original = ALL_DATA.find(r => r.diaNorm === dNorm).dia;
       const opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = d.charAt(0) + d.slice(1).toLowerCase();
+      opt.value = dNorm;   // comparamos con normalizado
+      opt.textContent = original.charAt(0).toUpperCase() + original.slice(1).toLowerCase();
       sel.appendChild(opt);
     });
 
@@ -192,6 +212,7 @@ async function fetchData() {
     document.querySelector('.status-dot').style.animation = 'none';
   }
 }
+
 function respClass(r) {
   const k = (r||'').toLowerCase().trim();
   if (k === 'heber')  return 'resp-heber';
@@ -201,12 +222,13 @@ function respClass(r) {
   return '';
 }
 function initials(n) { return n ? n.slice(0,2).toUpperCase() : '?' }
+
 function render() {
-  const dia  = document.getElementById('sel-dia').value.toUpperCase();
+  const dia  = normalizar(document.getElementById('sel-dia').value);
   const resp = document.getElementById('inp-resp').value.toLowerCase().trim();
   const esp  = document.getElementById('inp-esp').value.toLowerCase().trim();
   const filtered = ALL_DATA.filter(r => {
-    if (dia  && r.dia.toUpperCase() !== dia) return false;
+    if (dia  && r.diaNorm !== dia) return false;
     if (resp && !r.resp.toLowerCase().includes(resp)) return false;
     if (esp  && !r.espacio.toLowerCase().includes(esp)) return false;
     return true;
